@@ -109,7 +109,6 @@ export default function TodoForm({ uuid }) {
                     variant="outlined"
                     onKeyUp={onKeyUpHandler}
                     value={todoTextbox}
-                    defaultValue={todoTextbox}
                     onChange={(e) => setTodo({ ...todo, todoTextbox: e.target.value })}
                 />
             </div>

@@ -10,9 +10,9 @@ export default function TodoItem({ item }) {
 
     return (
         <Card classes={{ root: styles.card }} >
-            <CardContent>
+            <CardContent classes={{ root: styles.cardContent }}>
                 <h3>{format(new Date(item.date), 'P')}</h3>
-                <ul>
+                <ul className={styles.todoList}>
                     {item.items.map((item, index) => <li key={index}>{item}</li>)}
                 </ul>
             </CardContent>

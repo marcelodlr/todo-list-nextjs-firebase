@@ -6,3 +6,12 @@
     justify-content: space-between;
     margin-right: 8px;
 }
+
+.cardContent{
+    padding: 16px 16px 0px 16px;
+}
+
+.todoList{
+    height: 165px;
+    overflow-y: auto;
+}
