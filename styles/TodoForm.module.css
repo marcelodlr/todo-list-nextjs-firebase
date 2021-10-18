@@ -1,0 +1,35 @@
+.container{
+    width: 100vw;
+    height: 100vh;
+    background-color: #bababa;
+    padding: 70px;
+}
+
+.box{
+    margin: 0 auto;
+    background-color: white;
+    width: 35%;
+    height: 50vh;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+    overflow: hidden;
+  }
+
+  .todosDisplay{
+      height: 80%;
+      overflow-y: auto;
+  }
+
+  .inputContainers{
+      display: flex;
+      justify-content: space-between;
+  }
+  .buttonsContainer{
+      display: flex;
+      justify-content: flex-end;
+  }
+
+  .submitButton{
+      margin-left: 20px;
+  }

@@ -1,0 +1,30 @@
+.container{
+    background-color: #bababa;
+    max-width: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.box{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  background-color: white;
+  width: 35%;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+.loginButton{
+  align-self: flex-end;
+}
+
+.input{
+  width: 100%;
+  margin-bottom: 16px;
+}
