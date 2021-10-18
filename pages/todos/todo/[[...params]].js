@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, List, ListItem, IconButton, Box, Button } from '@mui/material';
 import DatePicker from '@mui/lab/DatePicker';
 import { Delete } from '@mui/icons-material'
@@ -6,7 +6,7 @@ import styles from '../../../styles/TodoForm.module.css';
 import { useRouter } from 'next/router';
 import { doc, setDoc, getDoc, getDocs, query, collection, where, getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuidGenerator } from 'uuid';
 import { startOfDay } from 'date-fns';
 const db = getFirestore();
 const auth = getAuth();
@@ -15,10 +15,31 @@ const toIsoDate = (date) => {
     return startOfDay(date).toISOString();
 }
 
-export default function TodoForm() {
+export async function getServerSideProps(ctx) {
+    const { params } = ctx.query;
+    return {
+        props: {
+            uuid: params && params.length > 0 ? params[0] : null,
+        },
+    };
+}
+
+export default function TodoForm({ uuid }) {
     const router = useRouter();
     const [todo, setTodo] = useState({ date: new Date(), items: [], todoTextbox: '' });
     let { date, items, todoTextbox } = todo;
+
+    useEffect(async () => {
+        if (uuid) {
+            let todoItem = await getDoc(doc(db, "todo", uuid));
+            if (todoItem.exists()) {
+                let item = todoItem.data();
+                setTodo({ date: new Date(item.date), items: item.items })
+            } else {
+                alert("an error occured when fetching the todo item.")
+            }
+        }
+    }, []);
 
     const onKeyUpHandler = (event) => {
         if (event.keyCode === 13 && todoTextbox) {
@@ -32,19 +53,14 @@ export default function TodoForm() {
         setTodo({ ...todo, items: newList });
     };
 
-    const onSubmit = async () => {
+    const tryAdd = async () => {
         const q = query(collection(db, "todo"), where("user_uid", "==", auth.currentUser.uid), where('date', '==', toIsoDate(date)));
         const querySnapshot = await getDocs(q);
         if (querySnapshot.docs.length > 0) {
             alert('There is already a todo list for this date');
         } else {
             try {
-                console.log({
-                    user_uid: auth.currentUser.uid,
-                    items: items,
-                    date: toIsoDate(date)
-                });
-                await setDoc(doc(db, 'todo', uuid()), {
+                await setDoc(doc(db, 'todo', uuidGenerator()), {
                     user_uid: auth.currentUser.uid,
                     items: items,
                     date: toIsoDate(date)
@@ -52,8 +68,26 @@ export default function TodoForm() {
                 alert('Todo added');
                 router.push('/todos');
             } catch (error) {
-                console.log(error.message)
+                alert(error.message)
             }
+        }
+    };
+
+    const tryUpdate = async () => {
+        await setDoc(doc(db, 'todo', uuid), {
+            user_uid: auth.currentUser.uid,
+            items: items,
+            date: toIsoDate(date)
+        });
+        alert('Todo updated');
+        router.push('/todos');
+    };
+
+    const onSubmit = async () => {
+        if (!uuid) {
+            await tryAdd();
+        } else {
+            await tryUpdate();
         }
     };
 
@@ -67,6 +101,7 @@ export default function TodoForm() {
                         setTodo({ ...todo, date: newValue });
                     }}
                     renderInput={(params) => <TextField {...params} />}
+                    disabled={!!uuid}
                 />
 
                 <TextField id="item"
@@ -74,6 +109,7 @@ export default function TodoForm() {
                     variant="outlined"
                     onKeyUp={onKeyUpHandler}
                     value={todoTextbox}
+                    defaultValue={todoTextbox}
                     onChange={(e) => setTodo({ ...todo, todoTextbox: e.target.value })}
                 />
             </div>
