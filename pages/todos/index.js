@@ -38,7 +38,10 @@ const TodoListComponent = () => {
     return (
         <div className={styles.container}>
             <Button onClick={signOutHandler} className={styles.logOut} variant="text">Log Out</Button>
-            {todos && todos.map(todo => <Todo key={todo.id} item={todo} />)}
+            {todos && todos.length > 0 ? todos.map(todo => <Todo key={todo.id} item={todo} />)
+            :
+            <p>Your Todo list is Empty</p>
+            }
             <Fab onClick={() => router.push('todos/todo')} className={styles.fab} color="primary" aria-label="add">
                 <AddIcon />
             </Fab>

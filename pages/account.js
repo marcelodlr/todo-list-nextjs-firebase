@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Container, TextField, Box, Button, Link } from '@mui/material';
 import styles from '../styles/CreateAccount.module.css';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from 'next/router';
 
 export default function CreateAccount() {
+    const router = useRouter();
     var [loginInfo, setLoginInfo] = useState({
         email: '',
         password: '',
@@ -27,10 +29,9 @@ export default function CreateAccount() {
         if (validatePassword()) {
             const auth = getAuth();
             createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log(user);
-                })
+                .then(() => {
+                    router.push('/todos')
+                })  
                 .catch((error) => {
                     alert(error.message);
                 });
