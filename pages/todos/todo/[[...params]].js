@@ -74,13 +74,17 @@ export default function TodoForm({ uuid }) {
     };
 
     const tryUpdate = async () => {
-        await setDoc(doc(db, 'todo', uuid), {
-            user_uid: auth.currentUser.uid,
-            items: items,
-            date: toIsoDate(date)
-        });
-        alert('Todo updated');
-        router.push('/todos');
+        try {
+            await setDoc(doc(db, 'todo', uuid), {
+                user_uid: auth.currentUser.uid,
+                items: items,
+                date: toIsoDate(date)
+            });
+            alert('Todo updated');
+            router.push('/todos');
+        } catch (error) {
+            alert(error.message)
+        }
     };
 
     const onSubmit = async () => {
